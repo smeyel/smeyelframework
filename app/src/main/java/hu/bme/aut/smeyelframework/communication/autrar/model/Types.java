@@ -33,5 +33,6 @@ public class Types {
         public static final String POLYGON_2D = "polygon2d";
         public static final String JPEG = "jpeg";
         public static final String MAT = "Mat";
+        public static final String MEASUREMENT_LOG = "measurementlog";
     }
 }

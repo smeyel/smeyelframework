@@ -3,29 +3,24 @@ package hu.bme.aut.smeyelframework.communication.autrar.model;
 import java.util.List;
 
 /**
+ * A single message according to the AUT Rar specification.
+ *
+ * <p>
  * Created on 2014.09.18..
  * @author Ákos Pap
  */
 public class RarItem {
-    String action;
-
-    String subject;
-
-    Integer subjectID;
-
-    String type;
-
-    List<Double> values;
-
-    Integer messageID;
-
-    Long timestamp;
-
-    Integer binarySize;
-
-    String text;
-
-    String parentMessageID;
+    protected String action;
+    protected String subject;
+    protected Integer subjectID;
+    protected String type;
+    protected List<Double> values;
+    protected Integer messageID;
+    protected Long timestamp;
+    protected Integer binarySize;
+    protected String text;
+    protected String parentMessageID;
+    protected List<?> items;
 
     public String getAction() {
         return action;
@@ -105,5 +100,13 @@ public class RarItem {
 
     public void setParentMessageID(String parentMessageID) {
         this.parentMessageID = parentMessageID;
+    }
+
+    public List<?> getItems() {
+        return items;
+    }
+
+    public void setItems(List<?> items) {
+        this.items = items;
     }
 }

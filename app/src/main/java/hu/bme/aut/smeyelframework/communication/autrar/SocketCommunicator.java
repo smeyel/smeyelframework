@@ -8,8 +8,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
- * Created on 2014.09.18..
+ * Communicates through a socket with the given address and port.
  *
+ * Created on 2014.09.18..
  * @author Ákos Pap
  */
 public class SocketCommunicator extends BaseCommunicator {

@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created on 2014.09.18..
+ * A container for Rar items and for optional raw payloads.
  *
+ * Created on 2014.09.18..
  * @author Ákos Pap
  */
 public class RarContainer {

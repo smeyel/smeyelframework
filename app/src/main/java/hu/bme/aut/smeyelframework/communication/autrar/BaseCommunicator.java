@@ -11,8 +11,10 @@ import java.io.OutputStream;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 
 /**
- * Created on 2014.09.18..
+ * Handles outbound RAR communication on a given {@link java.io.OutputStream}.
  *
+ * <p>
+ * Created on 2014.09.18..
  * @author Ákos Pap
  */
 public abstract class BaseCommunicator {
@@ -28,10 +30,19 @@ public abstract class BaseCommunicator {
 
     protected abstract OutputStream getOutputStream() throws IOException;
 
+    /**
+     * Descendants should close the stream here, if necessary.
+     */
     protected void cleanup() {
         // Override if required
     }
 
+    /**
+     * Serializes the container's JSON data, appends a '#' character,
+     * then writes out the raw payload(s) if any.
+     *
+     * @param container The RarContainer to send.
+     */
     public void send(RarContainer container) {
 
         OutputStream os = null;
@@ -39,7 +50,7 @@ public abstract class BaseCommunicator {
         try {
             os = getOutputStream();
 
-            String msg = gson.toJson(container.getItems());
+            String msg = gson.toJson(container.getItems()) + '#';
 
             os.write(msg.getBytes());
 
@@ -51,15 +62,7 @@ public abstract class BaseCommunicator {
         } catch (IOException e) {
             Log.e(TAG, "IOException...", e);
         } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace(); // fatal...
-                }
-            }
-
-            cleanup();
+           cleanup();
         }
     }
 }

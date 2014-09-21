@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Created on 2014.09.18..
+ * Collects the message in a String.
  *
+ * <p>
+ * Created on 2014.09.18..
  * @author Ákos Pap
  */
 public class StringCommunicator extends BaseCommunicator {
@@ -29,5 +31,10 @@ public class StringCommunicator extends BaseCommunicator {
     @Override
     protected void cleanup() {
         Log.i(TAG, "Content: " + baos.toString());
+    }
+
+    @Override
+    public String toString() {
+        return baos.toString();
     }
 }
