@@ -10,6 +10,7 @@ import org.opencv.core.Core;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -47,15 +48,25 @@ public class CommunicationThread implements Runnable {
             ss = new ServerSocket();
             ss.setReuseAddress(true);
             ss.bind(new InetSocketAddress(SMEyeLFrameworkApplication.getServerPort()));
+            ss.setSoTimeout(500); // Interrupts the accept method to be able to stop thread.
         } catch (IOException e) {
             Log.e(TAG, "Couldn't connect to specified port!", e);
         }
 
         Socket s = null;
-        while (! isStopped) {
+main:   while (! isStopped) {
             try {
                 Log.i(TAG, "Waiting for connection on port " + ss.getLocalPort());
-                s = ss.accept();
+                while (true) {
+                    try {
+                        s = ss.accept();
+                        break; // breaks the waiting loop, and continues with normal flow.
+                    } catch (InterruptedIOException e) {
+                        if (isStopped) {
+                            continue main; // need to stop, continue main loop so that it ends.
+                        }
+                    }
+                }
                 Log.i(TAG, "Connected to " + s.getRemoteSocketAddress().toString());
 
                 InputStream in = s.getInputStream();
@@ -129,7 +140,12 @@ public class CommunicationThread implements Runnable {
                 timing.stop(Measurements.ALL);
 
             } catch (SocketException e) {
-                e.printStackTrace();
+                if (e.getMessage().contains("closed")) {
+                    Log.e(TAG, "Socket is closed.", e);
+                } else {
+                    e.printStackTrace();
+                }
+                isStopped = true;
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -144,6 +160,12 @@ public class CommunicationThread implements Runnable {
                 }
             }
         } // while (! isStopped)
+
+        try {
+            ss.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void stop() {

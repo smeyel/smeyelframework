@@ -3,6 +3,7 @@ package hu.bme.aut.smeyelframework;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import hu.bme.aut.smeyelframework.communication.autrar.CommunicationThread;
@@ -50,10 +51,19 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
 
+        Log.d(TAG, "Pausing...");
         if (communicationThreadRunnable != null) {
             communicationThreadRunnable.stop();
+            Log.d(TAG, "Stopped thread");
             if (communicationThreadThread != null) {
                 communicationThreadThread.interrupt();
+                Log.d(TAG, "Interrupted thread");
+                try {
+                    communicationThreadThread.join(1000);
+                    Log.d(TAG, "Joined thread");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
