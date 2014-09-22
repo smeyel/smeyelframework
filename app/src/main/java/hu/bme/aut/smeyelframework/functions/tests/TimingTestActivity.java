@@ -1,4 +1,4 @@
-package hu.bme.aut.smeyelframework.functions.communicationtest;
+package hu.bme.aut.smeyelframework.functions.tests;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.util.Log;
 
 import hu.bme.aut.smeyelframework.R;
 import hu.bme.aut.smeyelframework.communication.autrar.StringCommunicator;
+import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.timing.Timing;
 
 public class TimingTestActivity extends Activity {
@@ -38,8 +39,11 @@ public class TimingTestActivity extends Activity {
 
                 t.stop("FullProcess");
 
+                RarContainer container = new RarContainer();
+                container.addItem(t.getLog().pack());
+
                 StringCommunicator sc = new StringCommunicator();
-                sc.send(t.getLog().pack());
+                sc.send(container);
                 Log.i(TAG, sc.toString());
             }
         }.start();

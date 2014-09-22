@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hu.bme.aut.smeyelframework" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".SMEyeLFrameworkApplication"
         android:allowBackup="true"
@@ -18,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="hu.bme.aut.smeyelframework.functions.communicationtest.CommTestActivity"
+            android:name="hu.bme.aut.smeyelframework.functions.tests.CommTestActivity"
             android:label="@string/title_activity_comm_test"
             android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity" >
             <meta-data
@@ -26,7 +29,7 @@
                 android:value="hu.bme.aut.smeyelframework.MainActivity" />
         </activity>
         <activity
-            android:name="hu.bme.aut.smeyelframework.functions.communicationtest.TimingTestActivity"
+            android:name="hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity"
             android:label="@string/title_activity_timing_test"
             android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity" >
             <meta-data

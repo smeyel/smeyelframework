@@ -1,4 +1,4 @@
-package hu.bme.aut.smeyelframework.functions.communicationtest;
+package hu.bme.aut.smeyelframework.functions.tests;
 
 import android.app.Activity;
 import android.os.Bundle;

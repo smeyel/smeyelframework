@@ -46,6 +46,14 @@ public class Timing {
      */
     private Map<String, Metadata> map = new HashMap<>();
 
+    public static long getCurrentTickstamp() {
+        return Core.getTickCount();
+    }
+
+    public static long getTickStampAtDelta(long deltaUS) {
+        return Core.getTickCount() + (long)(deltaUS * Core.getTickFrequency());
+    }
+
     /**
      * Container to store data related to a specific measurement.
      */

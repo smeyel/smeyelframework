@@ -39,28 +39,28 @@ public class MeasurementLog {
     }
 
     /**
-     * Constructs a new {@link hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer}
-     * that has a single item. THat item has the type {@link hu.bme.aut.smeyelframework.communication.autrar.model.Types.Type#MEASUREMENT_LOG}
+     * Packs the log into a RarItem with action: INFO, subject: LOG,
      * and in the items field the list of LogItems.
      *
      * @return The RarContainer.
      */
-    public RarContainer pack() {
+    public RarItem pack() {
         RarItem rarItem = new RarItem();
 
-        rarItem.setType(Types.Type.MEASUREMENT_LOG);
-        List<LogItem> items = new ArrayList<LogItem>(data);
+        rarItem.setAction(Types.Action.INFO);
+        rarItem.setSubject(Types.Subject.LOG);
+        List<LogItem> items = new ArrayList<>(data);
         rarItem.setItems(items);
 
-        RarContainer container = new RarContainer();
-        container.addItem(rarItem);
-
-        return container;
+        return rarItem;
     }
 
     public void send(OutputStream os) {
         StreamCommunicator comm = new StreamCommunicator(os);
 
-        comm.send(this.pack());
+        RarContainer container = new RarContainer();
+        container.addItem(this.pack());
+
+        comm.send(container);
     }
 }

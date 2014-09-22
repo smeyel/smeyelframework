@@ -18,9 +18,20 @@ public class RarItem {
     protected Integer messageID;
     protected Long timestamp;
     protected Integer binarySize;
+    protected String b64Data;
     protected String text;
     protected String parentMessageID;
     protected List<?> items;
+
+    public RarItem() {
+        timestamp = System.currentTimeMillis();
+    }
+
+    public RarItem(boolean noInitTimestamp) {
+        if (! noInitTimestamp) {
+            timestamp = System.currentTimeMillis();
+        }
+    }
 
     public String getAction() {
         return action;
@@ -84,6 +95,14 @@ public class RarItem {
 
     public void setBinarySize(Integer binarySize) {
         this.binarySize = binarySize;
+    }
+
+    public String getB64Data() {
+        return b64Data;
+    }
+
+    public void setB64Data(String b64Data) {
+        this.b64Data = b64Data;
     }
 
     public String getText() {

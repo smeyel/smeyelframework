@@ -35,4 +35,14 @@ public class SMEyeLFrameworkApplication extends Application {
         super.onCreate();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, loaderCallback);
     }
+
+    public static int getServerPort() {
+        // TODO from shared prefs (in onCreate)
+        return 6000;
+    }
+
+    public static boolean isBase64Allowed() {
+        // TODO from shared prefs (in onCreate)
+        return false;
+    }
 }

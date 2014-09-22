@@ -25,7 +25,9 @@ public abstract class BaseCommunicator {
     static {
         GsonBuilder builder = new GsonBuilder();
 //        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        gson = builder.create();
+
+        // see http://stackoverflow.com/a/16558757 for disableHtmlEscaping
+        gson = builder.disableHtmlEscaping().create();
     }
 
     protected abstract OutputStream getOutputStream() throws IOException;
@@ -48,6 +50,8 @@ public abstract class BaseCommunicator {
         OutputStream os = null;
 
         try {
+            Log.d(TAG, "Writing a container with " + container.getItems().size() + " items and "
+                    + container.getPayloads().size() + " payloads.");
             os = getOutputStream();
 
             String msg = gson.toJson(container.getItems()) + '#';
