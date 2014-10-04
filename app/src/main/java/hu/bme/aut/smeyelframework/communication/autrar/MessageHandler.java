@@ -15,9 +15,6 @@ public interface MessageHandler {
     /**
      * Handle the incoming message, and send the response through {@code out}.
      * <strong>Implementations MUST close the stream themselves!</strong>
-     * <p>
-     * Implementations should do their stuff fast, or asynchronously, so that
-     * the main comm. thread doesn't block. TODO hardcode async?
      *
      * @param msg The incoming message.
      * @param socket The stream to the sender of the message.

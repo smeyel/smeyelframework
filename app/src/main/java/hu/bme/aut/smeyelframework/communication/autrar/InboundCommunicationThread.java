@@ -1,5 +1,6 @@
 package hu.bme.aut.smeyelframework.communication.autrar;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -75,8 +76,8 @@ public class InboundCommunicationThread extends Thread {
                 MessageType mt = MessageType.fromMsg(jobj);
                 MessageHandler handler = MessageHandlerRepo.getForType(mt);
 
-                handler.handleMessage(item, s);
-
+                Log.d(TAG, "Executing a handler for the message");
+                new AsyncMessageHandler(handler, item, s).execute();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -133,5 +134,29 @@ public class InboundCommunicationThread extends Thread {
         }
 
         return baos.toString();
+    }
+
+    private static class AsyncMessageHandler extends AsyncTask<Void, Void, Void> {
+
+        private MessageHandler handler;
+        private RarItem item;
+        private Socket s;
+
+        private AsyncMessageHandler(MessageHandler handler, RarItem item, Socket s) {
+            this.handler = handler;
+            this.item = item;
+            this.s = s;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                handler.handleMessage(item, s);
+            } catch (IOException e) {
+                Log.e("AsyncMessageHandler", "Failed to handle message!", e);
+            }
+
+            return null;
+        }
     }
 }
