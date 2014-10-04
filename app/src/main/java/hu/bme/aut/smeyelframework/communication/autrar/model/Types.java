@@ -8,7 +8,7 @@ package hu.bme.aut.smeyelframework.communication.autrar.model;
 public class Types {
 
     public static class Action {
-        public static final String TAG = "action";
+        public static final String KEY = "action";
 
         public static final String INFO = "info";
         public static final String COMMAND = "command";

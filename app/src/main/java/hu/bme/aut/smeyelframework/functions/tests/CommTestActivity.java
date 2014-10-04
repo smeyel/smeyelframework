@@ -1,6 +1,5 @@
 package hu.bme.aut.smeyelframework.functions.tests;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import java.util.Arrays;
@@ -11,8 +10,9 @@ import hu.bme.aut.smeyelframework.communication.autrar.StringCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
+import hu.bme.aut.smeyelframework.events.EventActivity;
 
-public class CommTestActivity extends Activity {
+public class CommTestActivity extends EventActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

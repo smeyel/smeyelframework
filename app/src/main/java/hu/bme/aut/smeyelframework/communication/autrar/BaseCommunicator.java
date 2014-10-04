@@ -21,7 +21,7 @@ public abstract class BaseCommunicator {
 
     public static final String TAG = "SMEyeL::Framework::Communicator";
 
-    static final Gson gson;
+    public static final Gson gson;
     static {
         GsonBuilder builder = new GsonBuilder();
 //        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");

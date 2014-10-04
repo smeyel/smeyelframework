@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_comm_test">Communication test</string>
     <string name="title_activity_timing_test">TimingTestActivity</string>
+    <string name="title_activity_camera_preview">CameraPreviewActivity</string>
 
 </resources>

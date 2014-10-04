@@ -2,6 +2,8 @@ package hu.bme.aut.smeyelframework.communication.autrar.model;
 
 import java.util.List;
 
+import hu.bme.aut.smeyelframework.communication.autrar.BaseCommunicator;
+
 /**
  * A single message according to the AUT Rar specification.
  *
@@ -31,6 +33,11 @@ public class RarItem {
         if (! noInitTimestamp) {
             timestamp = System.currentTimeMillis();
         }
+    }
+
+    @Override
+    public String toString() {
+        return BaseCommunicator.gson.toJson(this);
     }
 
     public String getAction() {

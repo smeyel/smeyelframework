@@ -1,22 +1,28 @@
 package hu.bme.aut.smeyelframework;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import hu.bme.aut.smeyelframework.communication.autrar.CommunicationThread;
+import java.io.IOException;
+import java.net.Socket;
+
+import hu.bme.aut.smeyelframework.communication.autrar.MessageHandler;
+import hu.bme.aut.smeyelframework.communication.autrar.MessageHandlerRepo;
+import hu.bme.aut.smeyelframework.communication.autrar.MessageType;
+import hu.bme.aut.smeyelframework.communication.autrar.StreamCommunicator;
+import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
+import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
+import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
+import hu.bme.aut.smeyelframework.events.EventActivity;
 import hu.bme.aut.smeyelframework.functions.tests.CommTestActivity;
 import hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends EventActivity {
 
     public static final String TAG = "MainActivity";
-
-    private CommunicationThread communicationThreadRunnable;
-    private Thread communicationThreadThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,35 +42,28 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, TimingTestActivity.class));
             }
         });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        communicationThreadRunnable = new CommunicationThread();
-        communicationThreadThread = new Thread(communicationThreadRunnable);
-        communicationThreadThread.start();
-    }
+        MessageType takePicture = new MessageType(Types.Subject.TAKE_PICTURE, Types.Action.COMMAND);
+        MessageHandlerRepo.registerHandler(takePicture, new MessageHandler() {
+            @Override
+            public void handleMessage(RarItem msg, Socket socket) throws IOException {
+                Log.d(TAG, "Taking picture...");
+                byte[] img = "Hello!".getBytes();
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+                RarContainer container = new RarContainer();
+                RarItem item = new RarItem();
+                item.setSubject(Types.Subject.TAKE_PICTURE);
+                item.setAction(Types.Action.INFO);
+                item.setBinarySize(img.length);
 
-        Log.d(TAG, "Pausing...");
-        if (communicationThreadRunnable != null) {
-            communicationThreadRunnable.stop();
-            Log.d(TAG, "Stopped thread");
-            if (communicationThreadThread != null) {
-                communicationThreadThread.interrupt();
-                Log.d(TAG, "Interrupted thread");
-                try {
-                    communicationThreadThread.join(1000);
-                    Log.d(TAG, "Joined thread");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                container.addItem(item);
+                container.addPayload(img);
+
+                new StreamCommunicator(socket.getOutputStream()).send(container);
+
+                socket.close();
             }
-        }
+        });
     }
 }

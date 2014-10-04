@@ -1,15 +1,15 @@
 package hu.bme.aut.smeyelframework.functions.tests;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
 import hu.bme.aut.smeyelframework.R;
 import hu.bme.aut.smeyelframework.communication.autrar.StringCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
+import hu.bme.aut.smeyelframework.events.EventActivity;
 import hu.bme.aut.smeyelframework.timing.Timing;
 
-public class TimingTestActivity extends Activity {
+public class TimingTestActivity extends EventActivity {
 
     public static final String TAG = "TimingTestActivity";
 
