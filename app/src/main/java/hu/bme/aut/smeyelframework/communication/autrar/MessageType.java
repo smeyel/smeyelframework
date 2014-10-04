@@ -1,11 +1,9 @@
 package hu.bme.aut.smeyelframework.communication.autrar;
 
+import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
+import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 
 /**
 * Created on 2014.10.03..
@@ -16,16 +14,12 @@ public class MessageType {
     public String subject;
     public String action;
 
-    public static MessageType fromMsg(JSONObject jobj) {
+    public static MessageType fromMsg(RarItem item) {
         MessageType mt = null;
-        if (jobj.has(Types.Subject.KEY) && jobj.has(Types.Action.KEY)) {
-            try {
-                mt = new MessageType(jobj.getString(Types.Subject.KEY), jobj.getString(Types.Action.KEY));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        if (! TextUtils.isEmpty(item.getSubject()) && ! TextUtils.isEmpty(item.getAction())) {
+                mt = new MessageType(item.getSubject(), item.getAction());
         } else {
-            Log.w("MessageType", "Message object is not a valid message! " + jobj.toString());
+            Log.w("MessageType", "Message object is not a valid message! " + item.toString());
         }
 
         return mt;

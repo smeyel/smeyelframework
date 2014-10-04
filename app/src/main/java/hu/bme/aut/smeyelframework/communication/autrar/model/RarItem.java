@@ -1,5 +1,7 @@
 package hu.bme.aut.smeyelframework.communication.autrar.model;
 
+import com.google.gson.GsonBuilder;
+
 import java.util.List;
 
 import hu.bme.aut.smeyelframework.communication.autrar.BaseCommunicator;
@@ -38,6 +40,10 @@ public class RarItem {
     @Override
     public String toString() {
         return BaseCommunicator.gson.toJson(this);
+    }
+
+    public String toPrettyString() {
+        return new GsonBuilder().setPrettyPrinting().create().toJson(this);
     }
 
     public String getAction() {

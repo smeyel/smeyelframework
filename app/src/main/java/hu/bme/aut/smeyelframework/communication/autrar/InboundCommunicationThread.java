@@ -3,14 +3,10 @@ package hu.bme.aut.smeyelframework.communication.autrar;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -64,24 +60,18 @@ public class InboundCommunicationThread extends Thread {
 
 
                 InputStream in = s.getInputStream();
-                OutputStream out = s.getOutputStream();
 
                 String message = readMessage(in);
-                JSONObject jobj = new JSONObject(message);
-                Log.d(TAG, "Received message:\n" + jobj.toString(2));
-
                 RarItem item = BaseCommunicator.gson.fromJson(message, RarItem.class);
+                Log.d(TAG, "Received message:\n" + item.toPrettyString());
 
-
-                MessageType mt = MessageType.fromMsg(jobj);
+                MessageType mt = MessageType.fromMsg(item);
                 MessageHandler handler = MessageHandlerRepo.getForType(mt);
 
                 Log.d(TAG, "Executing a handler for the message");
                 new AsyncMessageHandler(handler, item, s).execute();
 
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
                 e.printStackTrace();
             }
         } // main loop
