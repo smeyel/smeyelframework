@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
+import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 
 /**
  * Handles outbound RAR communication on a given {@link java.io.OutputStream}.
@@ -68,5 +69,11 @@ public abstract class BaseCommunicator {
         } finally {
            cleanup();
         }
+    }
+
+    public void send(RarItem singleItem) {
+        RarContainer container = new RarContainer();
+        container.addItem(singleItem);
+        send(container);
     }
 }

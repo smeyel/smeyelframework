@@ -8,9 +8,17 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import hu.bme.aut.smeyelframework.communication.autrar.MessageHandler;
+import hu.bme.aut.smeyelframework.communication.autrar.MessageHandlerRepo;
+import hu.bme.aut.smeyelframework.communication.autrar.MessageType;
+import hu.bme.aut.smeyelframework.communication.autrar.StreamCommunicator;
+import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
+import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
 import hu.bme.aut.smeyelframework.events.EventActivity;
 import hu.bme.aut.smeyelframework.functions.CameraPreviewActivity;
 import hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity;
@@ -43,6 +51,26 @@ public class SMEyeLFrameworkApplication extends Application {
         super.onCreate();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, loaderCallback);
 //        cameraPreviewHolder = new CameraPreviewHolder(this);
+
+        registerPongMsgHandler();
+    }
+
+    private void registerPongMsgHandler() {
+        MessageHandlerRepo.registerHandler(
+                new MessageType(Types.Subject.PING, Types.Action.QUERY),
+                new MessageHandler() {
+                    @Override
+                    public void handleMessage(RarItem msg, Socket socket) throws IOException {
+                        RarItem pong = new RarItem();
+                        pong.setSubject(Types.Subject.PONG);
+                        pong.setAction(Types.Action.INFO);
+
+                        new StreamCommunicator(socket.getOutputStream()).send(pong);
+
+                        socket.close();
+                    }
+                }
+        );
     }
 
     public static int getServerPort() {

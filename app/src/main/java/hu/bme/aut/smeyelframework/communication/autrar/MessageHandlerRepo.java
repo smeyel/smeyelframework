@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
 
@@ -52,14 +51,11 @@ public class MessageHandlerRepo {
             Log.e("NullOrNotFoundHandler", "Message type is null, or there are no registered " +
                     "handlers for this message: " + msg);
 
-            RarContainer container = new RarContainer();
             RarItem item = new RarItem();
             item.setAction(Types.Action.ERROR);
             item.setText("ERROR! There are no handlers registered for this message!");
 
-            container.addItem(item);
-
-            new StreamCommunicator(socket.getOutputStream()).send(container);
+            new StreamCommunicator(socket.getOutputStream()).send(item);
 
             socket.close();
         }
