@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="hu.bme.aut.smeyelframework.SMEyeLFrameworkApplication"
@@ -34,6 +35,15 @@
             android:name="hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity"
             android:label="@string/title_activity_timing_test"
             android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="hu.bme.aut.smeyelframework.MainActivity" />
+        </activity>
+        <activity
+            android:name=".functions.CameraPreviewActivity"
+            android:label="@string/title_activity_camera_preview"
+            android:screenOrientation="sensorLandscape"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="hu.bme.aut.smeyelframework.MainActivity" />

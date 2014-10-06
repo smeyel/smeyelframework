@@ -44,18 +44,16 @@ public class SMEyeLFrameworkApplication extends Application {
             }
         }
     };
-//    private CameraPreviewHolder cameraPreviewHolder;
 
     @Override
     public void onCreate() {
         super.onCreate();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, loaderCallback);
-//        cameraPreviewHolder = new CameraPreviewHolder(this);
 
-        registerPongMsgHandler();
+        registerPingMsgHandler();
     }
 
-    private void registerPongMsgHandler() {
+    private void registerPingMsgHandler() {
         MessageHandlerRepo.registerHandler(
                 new MessageType(Types.Subject.PING, Types.Action.QUERY),
                 new MessageHandler() {
@@ -121,64 +119,4 @@ public class SMEyeLFrameworkApplication extends Application {
         return registry.get(name);
     }
 
-//    public CameraPreviewHolder getCameraPreviewHolder() {
-//        return cameraPreviewHolder;
-//    }
-//
-//    public static class CameraPreviewHolder {
-//        private Context context;
-//
-//        private WindowManager windowManager;
-//        private SurfaceView surfaceView;
-//        private final WindowManager.LayoutParams params;
-//
-//        public CameraPreviewHolder(Context context) {
-//            this.context = context;
-//
-//            windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//            params = new WindowManager.LayoutParams(1, 1,
-//                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-//                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-//                    PixelFormat.TRANSLUCENT);
-//
-//            surfaceView = new SurfaceView(context);
-//            surfaceView.setFocusable(true);
-//
-//            SurfaceHolder holder = surfaceView.getHolder();
-//            holder.addCallback(new SurfaceHolder.Callback() {
-//                @Override
-//                public void surfaceCreated(SurfaceHolder holder) {
-//
-//                }
-//
-//                @Override
-//                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-//
-//                }
-//
-//                @Override
-//                public void surfaceDestroyed(SurfaceHolder holder) {
-//
-//                }
-//            });
-//            windowManager.addView(surfaceView, params);
-//
-//        }
-//
-//        public void release() {
-//            try {
-//                windowManager.removeView(surfaceView);
-//            } catch (Exception e) {
-//                // view wasn't attached...
-//            }
-//        }
-//
-//        public SurfaceHolder getHolder() {
-//            return surfaceView.getHolder();
-//        }
-//
-//        public void prepare() {
-//            windowManager.addView(surfaceView, params);
-//        }
-//    }
 }

@@ -3,6 +3,7 @@ package hu.bme.aut.smeyelframework.events;
 import android.app.Activity;
 import android.os.Bundle;
 
+import hu.bme.aut.smeyelframework.camera.CameraThread;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 
 /**
@@ -30,19 +31,19 @@ public class Events {
         }
     }
 
-//    public static class TakePicture {
-//        public CameraThread.PictureRequest request;
-//
-//        public TakePicture(CameraThread.PictureRequest request) {
-//            this.request = request;
-//        }
-//    }
-//
-//    public static class PictureTaken {
-//        public CameraThread.PictureRequest request;
-//
-//        public PictureTaken(CameraThread.PictureRequest request) {
-//            this.request = request;
-//        }
-//    }
+    public static class TakePicture {
+        public CameraThread.PictureRequest request;
+
+        public TakePicture(CameraThread.PictureRequest request) {
+            this.request = request;
+        }
+    }
+
+    public static class PictureTaken {
+        public CameraThread.PictureRequest request;
+
+        public PictureTaken(CameraThread.PictureRequest request) {
+            this.request = request;
+        }
+    }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import de.greenrobot.event.EventBus;
+import hu.bme.aut.smeyelframework.camera.CameraThread;
 import hu.bme.aut.smeyelframework.communication.autrar.InboundCommunicationThread;
 
 /**
@@ -18,14 +19,14 @@ public abstract class EventActivity extends Activity {
 
     private InboundCommunicationThread communicationThread;
 
-//    private CameraThread cameraThread;
+    private CameraThread cameraThread;
 
     @Override
     protected void onPause() {
         super.onPause();
 
         stopCommunicationThread();
-//        stopCameraThread();
+        stopCameraThread();
         EventBus.getDefault().unregister(this);
     }
 
@@ -35,7 +36,17 @@ public abstract class EventActivity extends Activity {
 
         EventBus.getDefault().register(this);
         startCommunicationThread();
-//        startCameraThread();
+        if (needsCameraThread()) {
+            startCameraThread();
+        }
+    }
+
+    protected boolean needsCameraThread() {
+        return false;
+    }
+
+    protected CameraThread getCameraThread() {
+        return cameraThread;
     }
 
     public void onEvent(Events.ChangeOperatingMode event) {
@@ -58,14 +69,13 @@ public abstract class EventActivity extends Activity {
         communicationThread.start();
     }
 
-//    protected void startCameraThread() {
-//        cameraThread = new CameraThread(
-//                ((SMEyeLFrameworkApplication) getApplication()).getCameraPreviewHolder()
-//        );
-//        cameraThread.start();
-//    }
+    protected void startCameraThread() {
+        cameraThread = new CameraThread(getApplicationContext());
+        cameraThread.start();
+    }
 
     protected void stopCommunicationThread() {
+        final String TAG = EventActivity.TAG + "_comm";
         if (communicationThread != null) {
             communicationThread.finish();
             Log.d(TAG, "Stopped thread");
@@ -80,20 +90,21 @@ public abstract class EventActivity extends Activity {
         }
     }
 
-//    protected void stopCameraThread() {
-//        if (cameraThread != null) {
-//            cameraThread.finish();
-//            Log.d(TAG, "Stopped thread");
-//            cameraThread.interrupt();
-//            Log.d(TAG, "Interrupted thread");
-//            try {
-//                cameraThread.join(1000);
-//                Log.d(TAG, "Joined thread");
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    protected void stopCameraThread() {
+        final String TAG = EventActivity.TAG + "_camera";
+        if (cameraThread != null) {
+            cameraThread.finish();
+            Log.d(TAG, "Stopped thread");
+            cameraThread.interrupt();
+            Log.d(TAG, "Interrupted thread");
+            try {
+                cameraThread.join(1000);
+                Log.d(TAG, "Joined thread");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     protected void restartCommunicationThread() {
         stopCommunicationThread();
