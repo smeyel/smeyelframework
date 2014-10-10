@@ -3,6 +3,7 @@ package hu.bme.aut.smeyelframework.functions;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
 import hu.bme.aut.smeyelframework.events.EventActivity;
+import hu.bme.aut.smeyelframework.timing.Timing;
 
 public class CameraPreviewActivity extends EventActivity {
 
@@ -45,7 +47,12 @@ public class CameraPreviewActivity extends EventActivity {
                 new MessageHandler() {
                     @Override
                     public void handleMessage(RarItem msg, Socket socket) throws IOException {
-                        getCameraThread().requestPicture(new CameraThread.PictureRequest(0, new PictureListener(socket)));
+                        getCameraThread().requestPicture(
+                                new CameraThread.PictureRequest(
+                                        Timing.getCurrentTickstamp(),
+                                        new PictureListener(socket)
+                                )
+                        );
                     }
                 }
         );
@@ -61,6 +68,11 @@ public class CameraPreviewActivity extends EventActivity {
 
         @Override
         public void onPictureTaken(CameraThread.PictureRequest request) {
+
+            long delay = request.takenTickstamp - request.desiredTickstamp;
+            Log.i(TAG, "Picture taken. Delay was " + delay + " ticks " +
+                    "which means " + Timing.asMilis(delay) + " ms.");
+
             RarItem item = new RarItem();
             item.setSubject(Types.Subject.CAMERA_IMAGE);
             item.setAction(Types.Action.INFO);

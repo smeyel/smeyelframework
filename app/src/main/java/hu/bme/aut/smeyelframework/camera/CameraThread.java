@@ -158,6 +158,7 @@ public class CameraThread extends Thread {
         if (camera != null) {
             camera.release();
             camera = null;
+            Log.d(TAG, "Released camera");
         }
     }
 

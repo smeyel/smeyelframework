@@ -54,6 +54,10 @@ public class Timing {
         return Core.getTickCount() + (long)(deltaUS * Core.getTickFrequency());
     }
 
+    public static long asMilis(long ticks) {
+        return (long) (ticks / Core.getTickFrequency() * 1000);
+    }
+
     /**
      * Container to store data related to a specific measurement.
      */
