@@ -50,11 +50,11 @@ public class Timing {
         return Core.getTickCount();
     }
 
-    public static long getTickStampAtDelta(long deltaUS) {
-        return Core.getTickCount() + (long)(deltaUS * Core.getTickFrequency());
+    public static long getTickStampAtDelta(long deltaMs) {
+        return Core.getTickCount() + (long)(deltaMs/1000.0 * Core.getTickFrequency());
     }
 
-    public static long asMilis(long ticks) {
+    public static long asMillis(long ticks) {
         return (long) (ticks / Core.getTickFrequency() * 1000);
     }
 

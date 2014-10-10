@@ -10,6 +10,9 @@ import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import hu.bme.aut.smeyelframework.SMEyeLFrameworkApplication;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
@@ -27,6 +30,9 @@ public class InboundCommunicationThread extends Thread {
     private volatile boolean isStopped = false;
 
     private Timing timing;
+
+    private final Set<Socket> activeSockets = new HashSet<>();
+
 
     @Override
     public void run() {
@@ -58,6 +64,7 @@ public class InboundCommunicationThread extends Thread {
                 if (isStopped) { break; }
                 Log.i(TAG, "Connected to " + s.getRemoteSocketAddress().toString());
 
+                activeSockets.add(s);
 
                 InputStream in = s.getInputStream();
 
@@ -74,12 +81,35 @@ public class InboundCommunicationThread extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            if (activeSockets.size() > 10) {
+                cleanActiveSockets();
+            }
         } // main loop
 
         try {
             ss.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        for (Socket socket : activeSockets) {
+            try {
+                socket.close();
+            } catch (IOException e) { /* do nothing */ }
+        }
+    }
+
+    private void cleanActiveSockets() {
+        Log.i(TAG, "Cleaning up sockets.");
+        synchronized (activeSockets) {
+            Iterator<Socket> it = activeSockets.iterator();
+            while (it.hasNext()) {
+                Socket curr = it.next();
+                if (curr == null || curr.isClosed()) {
+                    it.remove();
+                }
+            }
         }
     }
 

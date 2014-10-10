@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import de.greenrobot.event.EventBus;
 import hu.bme.aut.smeyelframework.timing.Timing;
@@ -34,7 +35,9 @@ public class CameraThread extends Thread {
     private volatile boolean isStopped = false;
 
     private final List<PreviewListener> previewListeners = new ArrayList<>();
-    private PictureRequest pictureRequest = null;
+//    private PictureRequest pictureRequest = null;
+    private final PriorityBlockingQueue<PictureRequest> pictureRequestQueue =
+        new PriorityBlockingQueue<>(2, PictureRequest.COMPARATOR);
     private final Object lock_pictureRequest = new Object();
 
     public CameraThread(Context context) {
@@ -58,10 +61,18 @@ public class CameraThread extends Thread {
                     e.printStackTrace();
                 }
 
-                if (pictureRequest != null) {
-                    synchronized (lock_pictureRequest) {
-                        final PictureRequest tmpPictureRequest = pictureRequest;
-                        pictureRequest = null;
+                if (! pictureRequestQueue.isEmpty()) {
+                    final PictureRequest tmpPictureRequest = pictureRequestQueue.peek();
+                    if (Timing.asMillis(tmpPictureRequest.desiredTickstamp - Timing.getCurrentTickstamp()) > 2*1000) {
+                        // next request is scheduled more than 2 seconds away. Do nothing.
+                    } else {
+                        pictureRequestQueue.poll(); // this one will be the next served request.
+                        while (Timing.asMillis(tmpPictureRequest.desiredTickstamp - Timing.getCurrentTickstamp()) > 300) {
+                            try {
+                                sleep(100);
+                            } catch (InterruptedException e) { /* do nothing */ }
+                        }
+
                         camera.takePicture(
                                 new Camera.ShutterCallback() {
                                     @Override
@@ -123,9 +134,7 @@ public class CameraThread extends Thread {
     }
 
     public void requestPicture(PictureRequest request) {
-        synchronized (lock_pictureRequest) {
-            pictureRequest = request;
-        }
+        pictureRequestQueue.add(request);
         this.interrupt();
     }
 

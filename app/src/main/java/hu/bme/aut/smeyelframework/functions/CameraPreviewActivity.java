@@ -47,9 +47,17 @@ public class CameraPreviewActivity extends EventActivity {
                 new MessageHandler() {
                     @Override
                     public void handleMessage(RarItem msg, Socket socket) throws IOException {
+                        long desiredTickstamp = Timing.getCurrentTickstamp();
+                        if (Types.Type.TIMESTAMP.equals(msg.getType())) {
+                            long timestampFromMsg = (long) Math.floor(msg.getValues().get(0));
+                            long timeDelta = timestampFromMsg - System.currentTimeMillis();
+                            Log.i(TAG, "Scheduled takePicture in " + timeDelta + " ms.");
+                            desiredTickstamp = Timing.getTickStampAtDelta(timeDelta);
+                        }
+
                         getCameraThread().requestPicture(
                                 new CameraThread.PictureRequest(
-                                        Timing.getCurrentTickstamp(),
+                                        desiredTickstamp,
                                         new PictureListener(socket)
                                 )
                         );
@@ -71,7 +79,7 @@ public class CameraPreviewActivity extends EventActivity {
 
             long delay = request.takenTickstamp - request.desiredTickstamp;
             Log.i(TAG, "Picture taken. Delay was " + delay + " ticks " +
-                    "which means " + Timing.asMilis(delay) + " ms.");
+                    "which means " + Timing.asMillis(delay) + " ms.");
 
             RarItem item = new RarItem();
             item.setSubject(Types.Subject.CAMERA_IMAGE);
