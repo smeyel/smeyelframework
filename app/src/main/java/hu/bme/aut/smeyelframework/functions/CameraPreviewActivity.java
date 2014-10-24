@@ -15,6 +15,7 @@ import hu.bme.aut.smeyelframework.communication.autrar.MessageHandler;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageHandlerRepo;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageType;
 import hu.bme.aut.smeyelframework.communication.autrar.StreamCommunicator;
+import hu.bme.aut.smeyelframework.communication.autrar.StringCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
@@ -89,6 +90,10 @@ public class CameraPreviewActivity extends EventActivity {
             RarContainer container = new RarContainer();
             container.addItem(item);
             container.addPayload(request.image);
+
+            StringCommunicator sc = new StringCommunicator();
+            sc.send(container);
+            Log.i(TAG, "Sending: " + sc.toString());
 
             try {
                 new StreamCommunicator(socket.getOutputStream()).send(container);
