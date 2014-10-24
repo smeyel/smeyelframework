@@ -4,15 +4,15 @@ import android.os.Bundle;
 
 import java.util.Arrays;
 
+import hu.bme.aut.smeyelframework.BaseActivity;
 import hu.bme.aut.smeyelframework.R;
 import hu.bme.aut.smeyelframework.communication.autrar.BaseCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.StringCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
-import hu.bme.aut.smeyelframework.events.EventActivity;
 
-public class CommTestActivity extends EventActivity {
+public class CommTestActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

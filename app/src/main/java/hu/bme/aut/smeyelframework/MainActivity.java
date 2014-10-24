@@ -4,13 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import hu.bme.aut.smeyelframework.events.EventActivity;
 import hu.bme.aut.smeyelframework.functions.CameraPreviewActivity;
 import hu.bme.aut.smeyelframework.functions.tests.CommTestActivity;
 import hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity;
 
 
-public class MainActivity extends EventActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String TAG = "MainActivity";
 

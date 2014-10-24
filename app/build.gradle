@@ -33,5 +33,4 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.code.gson:gson:2.3'
     provided project(':openCVLibrary249')
-    compile 'de.greenrobot:eventbus:2.2.1'
 }

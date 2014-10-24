@@ -1,7 +1,7 @@
 package hu.bme.aut.smeyelframework;
 
+import android.app.Activity;
 import android.app.Application;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -10,18 +10,14 @@ import org.opencv.android.OpenCVLoader;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
+import hu.bme.aut.smeyelframework.communication.autrar.InboundCommunicationThread;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageHandler;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageHandlerRepo;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageType;
 import hu.bme.aut.smeyelframework.communication.autrar.StreamCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
-import hu.bme.aut.smeyelframework.events.EventActivity;
-import hu.bme.aut.smeyelframework.functions.CameraPreviewActivity;
-import hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity;
 import hu.bme.aut.smeyelframework.timing.Timing;
 
 /**
@@ -44,6 +40,8 @@ public class SMEyeLFrameworkApplication extends Application {
             }
         }
     };
+
+    private static InboundCommunicationThread communicationThread;
 
     @Override
     public void onCreate() {
@@ -82,41 +80,28 @@ public class SMEyeLFrameworkApplication extends Application {
     }
 
 
-    /** ########### Activity registry ############################################ */
-
-    private static final Map<String, Class<? extends EventActivity>> registry = new HashMap<>();
-
-    static {
-        registerActivity("CameraPreview", CameraPreviewActivity.class);
-        registerActivity("Idle", MainActivity.class);
-        registerActivity("TimingTest", TimingTestActivity.class);
-    }
-
-    public static void registerActivity(String name, Class<? extends EventActivity> clazz) {
-        if (TextUtils.isEmpty(name)) {
-            Log.e(TAG, "Can't register activity because name is empty or null!");
-            return;
-        }
-        if (clazz == null) {
-            Log.e(TAG, "Can't register activity because class is null!");
-            return;
-        }
-
-        Class<? extends EventActivity> previousMapping = registry.put(name, clazz);
-        if (previousMapping != null) {
-            Log.w(TAG, "Registered activity for name " + name + ", but overrode previous value: " + previousMapping.getName());
-        } else {
-            Log.i(TAG, "Registered activity for name " + name);
+    private static int activeActivities = 0;
+    public static void activityBorn(Activity activity) {
+        activeActivities++;
+        if (communicationThread == null) {
+            communicationThread = new InboundCommunicationThread();
+            communicationThread.start();
         }
     }
 
-    public static Class<? extends EventActivity> getActivity(String name) {
-        if (TextUtils.isEmpty(name)) {
-            Log.e(TAG, "Can't get activity with empty name!");
-            return null;
+    public static void activityDied(Activity activity) {
+        activeActivities--;
+        if (activeActivities == 0 && communicationThread != null) {
+            communicationThread.finish();
+            Log.d(TAG, "Stopped thread");
+            communicationThread.interrupt();
+            Log.d(TAG, "Interrupted thread");
+            try {
+                communicationThread.join(1000);
+                Log.d(TAG, "Joined thread");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
-        return registry.get(name);
     }
-
 }

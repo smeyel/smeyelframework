@@ -1,16 +1,15 @@
 package hu.bme.aut.smeyelframework.functions;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.SurfaceView;
 
 import java.io.IOException;
 import java.net.Socket;
 
+import hu.bme.aut.smeyelframework.BaseActivity;
 import hu.bme.aut.smeyelframework.R;
-import hu.bme.aut.smeyelframework.camera.CameraThread;
+import hu.bme.aut.smeyelframework.camera.CameraHelper;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageHandler;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageHandlerRepo;
 import hu.bme.aut.smeyelframework.communication.autrar.MessageType;
@@ -19,29 +18,22 @@ import hu.bme.aut.smeyelframework.communication.autrar.StringCommunicator;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarContainer;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
-import hu.bme.aut.smeyelframework.events.EventActivity;
 import hu.bme.aut.smeyelframework.timing.Timing;
 
-public class CameraPreviewActivity extends EventActivity {
+public class CameraPreviewActivity extends BaseActivity {
 
-    private ImageView preview;
-    private CameraThread.PreviewListener previewListener;
+    public static final String TAG = "CameraPreviewActivity";
+
+    private SurfaceView preview;
+    private CameraHelper cameraHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_preview);
 
-        preview = (ImageView) findViewById(R.id.preview);
-
-        previewListener = new CameraThread.PreviewListener() {
-            @Override
-            public void onPreview(byte[] imgData) {
-                byte[] jpeg = getCameraThread().convertYuv2Jpeg(imgData);
-                Bitmap image = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
-                preview.setImageBitmap(image);
-            }
-        };
+        preview = (SurfaceView) findViewById(R.id.cameraPreview);
+        cameraHelper = new CameraHelper(preview);
 
         MessageHandlerRepo.registerHandler(
                 new MessageType(Types.Subject.TAKE_PICTURE, Types.Action.COMMAND),
@@ -56,8 +48,8 @@ public class CameraPreviewActivity extends EventActivity {
                             desiredTickstamp = Timing.getTickStampAtDelta(timeDelta);
                         }
 
-                        getCameraThread().requestPicture(
-                                new CameraThread.PictureRequest(
+                        cameraHelper.requestPicture(
+                                new CameraHelper.PictureRequest(
                                         desiredTickstamp,
                                         new PictureListener(socket)
                                 )
@@ -67,7 +59,7 @@ public class CameraPreviewActivity extends EventActivity {
         );
     }
 
-    private class PictureListener implements CameraThread.PictureTakenListener {
+    private class PictureListener implements CameraHelper.PictureTakenListener {
 
         private final Socket socket;
 
@@ -76,7 +68,7 @@ public class CameraPreviewActivity extends EventActivity {
         }
 
         @Override
-        public void onPictureTaken(CameraThread.PictureRequest request) {
+        public void onPictureTaken(CameraHelper.PictureRequest request) {
 
             long delay = request.takenTickstamp - request.desiredTickstamp;
             Log.i(TAG, "Picture taken. Delay was " + delay + " ticks " +
@@ -107,24 +99,5 @@ public class CameraPreviewActivity extends EventActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCameraThread().registerPreviewListener(previewListener);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getCameraThread().unregisterPreviewListener(previewListener);
-    }
-
-
-
-    @Override
-    protected boolean needsCameraThread() {
-        return true;
     }
 }
