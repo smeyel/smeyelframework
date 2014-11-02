@@ -10,9 +10,6 @@ import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import hu.bme.aut.smeyelframework.SMEyeLFrameworkApplication;
 import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
@@ -31,9 +28,6 @@ public class InboundCommunicationThread extends Thread {
 
     private Timing timing;
 
-    private final Set<Socket> activeSockets = new HashSet<>();
-
-
     @Override
     public void run() {
         waitForTimingLoad();
@@ -45,30 +39,38 @@ public class InboundCommunicationThread extends Thread {
             ss.bind(new InetSocketAddress(SMEyeLFrameworkApplication.getServerPort()));
             ss.setSoTimeout(500); // Interrupts the accept method to be able to stop thread.
         } catch (IOException e) {
-            Log.e(TAG, "Couldn't connect to specified port!", e);
+            Log.e(TAG, "Couldn't open specified port!", e);
             return;
         }
 
         Socket s = null;
-        while (! isStopped) {
-            try {
-                Log.i(TAG, "Waiting for connection on port " + ss.getLocalPort());
-                while (! isStopped) {
-                    try {
-                        s = ss.accept();
-                        break; // breaks the waiting loop, and continues with normal flow.
-                    } catch (InterruptedIOException e) {
-
-                    }
+        try {
+            Log.i(TAG, "Waiting for connection on port " + ss.getLocalPort());
+            while (! isStopped) {
+                try {
+                    s = ss.accept();
+                    break; // breaks the waiting loop, and continues with normal flow.
+                } catch (InterruptedIOException e) {
+                    /* no need to do anything */
                 }
-                if (isStopped) { break; }
-                Log.i(TAG, "Connected to " + s.getRemoteSocketAddress().toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-                activeSockets.add(s);
+        if (s == null || s.isClosed()) { return; }
+        Log.i(TAG, "Connected to " + s.getRemoteSocketAddress().toString());
 
+        while (! isStopped && s.isConnected()) {
+            try {
                 InputStream in = s.getInputStream();
 
-                String message = readMessage(in);
+                String message;
+                try {
+                    message = readMessage(in); // Blocks till incoming message
+                } catch (UnfinishedJsonMessageException e) {
+                    break; // possibly disconnected, finish listening and stop thread.
+                }
                 RarItem item = BaseCommunicator.gson.fromJson(message, RarItem.class);
                 Log.d(TAG, "Received message:\n" + item.toPrettyString());
 
@@ -81,35 +83,12 @@ public class InboundCommunicationThread extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            if (activeSockets.size() > 10) {
-                cleanActiveSockets();
-            }
-        } // main loop
+        }
 
         try {
             ss.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        for (Socket socket : activeSockets) {
-            try {
-                socket.close();
-            } catch (IOException e) { /* do nothing */ }
-        }
-    }
-
-    private void cleanActiveSockets() {
-        Log.i(TAG, "Cleaning up sockets.");
-        synchronized (activeSockets) {
-            Iterator<Socket> it = activeSockets.iterator();
-            while (it.hasNext()) {
-                Socket curr = it.next();
-                if (curr == null || curr.isClosed()) {
-                    it.remove();
-                }
-            }
         }
     }
 
@@ -150,7 +129,7 @@ public class InboundCommunicationThread extends Thread {
 
         if (ch == -1) {
             Log.w(TAG, "Connection terminated before reaching end of message! Received " + baos.size() + " bytes.");
-            throw new IOException("Connection terminated before reaching end of message! Received " + baos.size() + " bytes.");
+            throw new UnfinishedJsonMessageException("Connection terminated before reaching end of message! Received " + baos.size() + " bytes.");
         }
 
         return baos.toString();
@@ -177,6 +156,22 @@ public class InboundCommunicationThread extends Thread {
             }
 
             return null;
+        }
+    }
+
+    private static class UnfinishedJsonMessageException extends IOException {
+        public UnfinishedJsonMessageException() {}
+
+        public UnfinishedJsonMessageException(String detailMessage) {
+            super(detailMessage);
+        }
+
+        public UnfinishedJsonMessageException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public UnfinishedJsonMessageException(Throwable cause) {
+            super(cause == null ? null : cause.toString(), cause);
         }
     }
 }

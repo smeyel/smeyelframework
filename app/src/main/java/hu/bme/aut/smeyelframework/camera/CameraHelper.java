@@ -192,7 +192,7 @@ public class CameraHelper {
                 try {
                     sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    /* no need to do anything */
                 }
 
                 if (! pictureRequestQueue.isEmpty()) {

@@ -14,7 +14,7 @@ public interface MessageHandler {
 
     /**
      * Handle the incoming message, and send the response through {@code out}.
-     * <strong>Implementations MUST close the stream themselves!</strong>
+     * <strong>Implementations must NOT close the stream!</strong>
      *
      * @param msg The incoming message.
      * @param socket The stream to the sender of the message.

@@ -56,8 +56,6 @@ public class MessageHandlerRepo {
             item.setText("ERROR! There are no handlers registered for this message!");
 
             new StreamCommunicator(socket.getOutputStream()).send(item);
-
-            socket.close();
         }
     }
 }

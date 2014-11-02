@@ -62,8 +62,6 @@ public class SMEyeLFrameworkApplication extends Application {
                         pong.setAction(Types.Action.INFO);
 
                         new StreamCommunicator(socket.getOutputStream()).send(pong);
-
-                        socket.close();
                     }
                 }
         );
