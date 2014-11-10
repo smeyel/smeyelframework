@@ -44,45 +44,50 @@ public class InboundCommunicationThread extends Thread {
         }
 
         Socket s = null;
-        try {
-            Log.i(TAG, "Waiting for connection on port " + ss.getLocalPort());
-            while (! isStopped) {
-                try {
-                    s = ss.accept();
-                    break; // breaks the waiting loop, and continues with normal flow.
-                } catch (InterruptedIOException e) {
-                    /* no need to do anything */
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (s == null || s.isClosed()) { return; }
-        Log.i(TAG, "Connected to " + s.getRemoteSocketAddress().toString());
-
-        while (! isStopped && s.isConnected()) {
+        while (! isStopped) {
             try {
-                InputStream in = s.getInputStream();
-
-                String message;
-                try {
-                    message = readMessage(in); // Blocks till incoming message
-                } catch (UnfinishedJsonMessageException e) {
-                    break; // possibly disconnected, finish listening and stop thread.
+                Log.i(TAG, "Waiting for connection on port " + ss.getLocalPort());
+                while (!isStopped) {
+                    try {
+                        s = ss.accept();
+                        break; // breaks the waiting loop, and continues with normal flow.
+                    } catch (InterruptedIOException e) {
+                        /* no need to do anything */
+                    }
                 }
-                RarItem item = BaseCommunicator.gson.fromJson(message, RarItem.class);
-                Log.d(TAG, "Received message:\n" + item.toPrettyString());
-
-                MessageType mt = MessageType.fromMsg(item);
-                MessageHandler handler = MessageHandlerRepo.getForType(mt);
-
-                Log.d(TAG, "Executing a handler for the message");
-                new AsyncMessageHandler(handler, item, s).execute();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            if (s == null || s.isClosed()) {
+                continue; // unsuccessful connection, wait for a next one.
+            }
+            Log.i(TAG, "Connected to " + s.getRemoteSocketAddress().toString());
+
+            while (!isStopped && s.isConnected()) {
+                try {
+                    InputStream in = s.getInputStream();
+
+                    String message;
+                    try {
+                        message = readMessage(in); // Blocks till incoming message
+                    } catch (UnfinishedJsonMessageException e) {
+                        break; // possibly disconnected, finish listening and stop thread.
+                    }
+                    RarItem item = BaseCommunicator.gson.fromJson(message, RarItem.class);
+                    Log.d(TAG, "Received message:\n" + item.toPrettyString());
+
+                    MessageType mt = MessageType.fromMsg(item);
+                    MessageHandler handler = MessageHandlerRepo.getForType(mt);
+
+                    Log.d(TAG, "Executing a handler for the message");
+                    new AsyncMessageHandler(handler, item, s).execute();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.i(TAG, "Disconnected.");
         }
 
         try {
