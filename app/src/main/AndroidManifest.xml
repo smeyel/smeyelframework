@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -40,10 +41,19 @@
                 android:value="hu.bme.aut.smeyelframework.MainActivity" />
         </activity>
         <activity
-            android:name=".functions.CameraPreviewActivity"
+            android:name="hu.bme.aut.smeyelframework.functions.CameraPreviewActivity"
             android:label="@string/title_activity_camera_preview"
-            android:screenOrientation="sensorLandscape"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity"
+            android:screenOrientation="sensorLandscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="hu.bme.aut.smeyelframework.MainActivity" />
+        </activity>
+        <activity
+            android:name="hu.bme.aut.smeyelframework.functions.LedActivity"
+            android:label="@string/title_activity_led"
+            android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity"
+            android:screenOrientation="sensorLandscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="hu.bme.aut.smeyelframework.MainActivity" />

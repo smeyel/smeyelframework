@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import hu.bme.aut.smeyelframework.functions.CameraPreviewActivity;
+import hu.bme.aut.smeyelframework.functions.LedActivity;
 import hu.bme.aut.smeyelframework.functions.tests.CommTestActivity;
 import hu.bme.aut.smeyelframework.functions.tests.TimingTestActivity;
 
@@ -36,6 +37,13 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, CameraPreviewActivity.class));
+            }
+        });
+
+        findViewById(R.id.findLed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LedActivity.class));
             }
         });
     }

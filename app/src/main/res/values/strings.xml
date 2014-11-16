@@ -7,5 +7,6 @@
     <string name="title_activity_comm_test">Communication test</string>
     <string name="title_activity_timing_test">TimingTestActivity</string>
     <string name="title_activity_camera_preview">CameraPreviewActivity</string>
+    <string name="title_activity_led">LedActivity</string>
 
 </resources>

@@ -1,13 +1,19 @@
 package hu.bme.aut.smeyelframework.camera;
 
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -33,6 +39,9 @@ public class CameraHelper {
 
     private QueueMonitor queueMonitor;
 
+    private boolean isRecording = false;
+    private MediaRecorder mediaRecorder;
+
 
     public CameraHelper(SurfaceView surfaceView) {
         this.surfaceView = surfaceView;
@@ -40,6 +49,41 @@ public class CameraHelper {
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(surfaceHolderCallback);
 
+        mediaRecorder = new MediaRecorder();
+    }
+
+    public File startVideoRecording() {
+        camera.unlock();
+        mediaRecorder.reset();
+
+        mediaRecorder.setCamera(camera);
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+
+        final File destinationFile = getOutputMediaFile(MEDIA_TYPE_VIDEO);
+        mediaRecorder.setOutputFile(destinationFile.toString());
+
+        mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        mediaRecorder.start();
+        isRecording = true;
+
+        return destinationFile;
+    }
+
+    public void stopVideoRecording() {
+        if (isRecording) {
+            mediaRecorder.stop();
+            mediaRecorder.release();
+        }
     }
 
     private void startQueueMonitor() {
@@ -152,6 +196,37 @@ public class CameraHelper {
             camera = null;
             Log.d(TAG, "Released camera");
         }
+    }
+
+    public boolean isRecording() {
+        return isRecording;
+    }
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
+    /** Create a File for saving an image or video */
+    private static File getOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File sd = Environment.getExternalStorageDirectory();
+        File dir = new File(sd, "SMEyeL/Framework");
+        dir.mkdirs();
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(dir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        } else if(type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(dir.getPath() + File.separator +
+                    "VID_"+ timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
     }
 
     public static interface PreviewListener {

@@ -1,11 +1,17 @@
 package hu.bme.aut.smeyelframework.functions;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import hu.bme.aut.smeyelframework.BaseActivity;
 import hu.bme.aut.smeyelframework.R;
@@ -56,6 +62,62 @@ public class CameraPreviewActivity extends BaseActivity {
                     }
                 }
         );
+
+        final BurstPictureListener burstPictureListener = new BurstPictureListener();
+
+        findViewById(R.id.take5).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < 6; i++) {
+                    cameraHelper.requestPicture(new CameraHelper.PictureRequest(0, burstPictureListener));
+                }
+            }
+        });
+
+        findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                burstPictureListener.save();
+            }
+        });
+    }
+
+    private class BurstPictureListener implements CameraHelper.PictureTakenListener {
+
+        List<CameraHelper.PictureRequest> images = new ArrayList<>(5);
+
+        @Override
+        public void onPictureTaken(CameraHelper.PictureRequest request) {
+            images.add(request);
+        }
+
+        public void save() {
+            StringBuilder sb = new StringBuilder("Delays were: ");
+            long ts = images.get(0).takenTickstamp;
+            for (CameraHelper.PictureRequest pr : images) {
+                sb.append(Timing.getTickStampAtDelta(pr.takenTickstamp - ts)).append(" ");
+                ts = pr.takenTickstamp;
+            }
+            Log.i(TAG, sb.toString());
+
+            File sd = Environment.getExternalStorageDirectory();
+            File dir = new File(sd, "SMEyeL/Framework");
+            dir.mkdirs();
+
+            for (CameraHelper.PictureRequest pr : images) {
+                File f = new File(dir, "burst_" + pr.takenTickstamp + ".jpg");
+
+                try {
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(pr.image);
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            images.clear();
+        }
     }
 
     private class PictureListener implements CameraHelper.PictureTakenListener {
