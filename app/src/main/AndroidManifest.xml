@@ -58,6 +58,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="hu.bme.aut.smeyelframework.MainActivity" />
         </activity>
+        <activity
+            android:name="hu.bme.aut.smeyelframework.CreditsActivity"
+            android:label="@string/title_activity_credits"
+            android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="hu.bme.aut.smeyelframework.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

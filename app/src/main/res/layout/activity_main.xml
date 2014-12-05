@@ -35,26 +35,33 @@
                 android:id="@+id/commTest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Communication test" />
+                android:text="@string/title_activity_comm_test" />
 
             <Button
                 android:id="@+id/timingTest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Timing test" />
+                android:text="@string/title_activity_timing_test" />
 
             <Button
+                android:id="@+id/camPrevTest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CameraPreview Test"
-                android:id="@+id/camPrevTest"
+                android:text="@string/title_activity_camera_preview"
                 android:layout_gravity="center_horizontal" />
 
             <Button
+                android:id="@+id/findLed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Find LED"
-                android:id="@+id/findLed"
+                android:text="@string/title_activity_led"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:id="@+id/credits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_activity_credits"
                 android:layout_gravity="center_horizontal" />
 
         </LinearLayout>

@@ -2,11 +2,15 @@
 <resources>
 
     <string name="app_name">SMEyeLFramework</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_comm_test">Communication test</string>
-    <string name="title_activity_timing_test">TimingTestActivity</string>
-    <string name="title_activity_camera_preview">CameraPreviewActivity</string>
-    <string name="title_activity_led">LedActivity</string>
+    <string name="title_activity_timing_test">Timing test</string>
+    <string name="title_activity_camera_preview">Camera Preview</string>
+    <string name="title_activity_led">Led finding &amp; measuring</string>
+    <string name="title_activity_credits">Credits</string>
+
+    <string name="credits1">Sample application for the\nSMEyeL research</string>
+    <string name="credits2">Developer: Ákos Pap</string>
+    <string name="credits3">Scientific advisor: dr. Kristóf Csorba</string>
+    <string name="credits4">at BME AUT\n(http://aut.bme.hu)</string>
 
 </resources>

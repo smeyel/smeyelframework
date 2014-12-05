@@ -51,6 +51,13 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, LedActivity.class));
             }
         });
+
+        findViewById(R.id.credits).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CreditsActivity.class));
+            }
+        });
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
