@@ -50,6 +50,10 @@ public class Timing {
         return Core.getTickCount();
     }
 
+    public static long getCurrentTimestampUs() {
+        return (long) (Core.getTickCount() / Core.getTickFrequency() * 1000 * 1000);
+    }
+
     public static long getTickStampAtDelta(long deltaMs) {
         return Core.getTickCount() + (long)(deltaMs/1000.0 * Core.getTickFrequency());
     }

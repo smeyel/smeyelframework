@@ -42,6 +42,7 @@ public class CameraHelper {
     private boolean isRecording = false;
     private MediaRecorder mediaRecorder;
 
+    private int previewOrientation = 0;
 
     public CameraHelper(SurfaceView surfaceView) {
         this.surfaceView = surfaceView;
@@ -127,6 +128,9 @@ public class CameraHelper {
                 safeOpenCamera();
                 camera.setPreviewDisplay(holder);
                 camera.setPreviewCallback(previewCallback);
+
+                camera.setDisplayOrientation(previewOrientation);
+
                 camera.startPreview();
                 startQueueMonitor();
             } catch (IOException e) {
@@ -200,6 +204,13 @@ public class CameraHelper {
 
     public boolean isRecording() {
         return isRecording;
+    }
+
+    public void setPreviewOrientation(int orientation) {
+        previewOrientation = orientation;
+        if (camera != null) {
+            camera.setDisplayOrientation(orientation);
+        }
     }
 
     public static final int MEDIA_TYPE_IMAGE = 1;

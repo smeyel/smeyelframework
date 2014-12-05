@@ -53,7 +53,7 @@
             android:name="hu.bme.aut.smeyelframework.functions.LedActivity"
             android:label="@string/title_activity_led"
             android:parentActivityName="hu.bme.aut.smeyelframework.MainActivity"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="hu.bme.aut.smeyelframework.MainActivity" />

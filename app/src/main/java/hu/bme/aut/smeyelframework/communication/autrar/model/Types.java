@@ -30,6 +30,7 @@ public class Types {
         public static final String PING = "ping";
         public static final String PONG = "pong";
         public static final String LOG = "log";
+        public static final String TIMESYNC = "timesync";
     }
 
     public static class Type {

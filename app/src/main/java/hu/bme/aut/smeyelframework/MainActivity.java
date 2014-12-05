@@ -2,7 +2,12 @@ package hu.bme.aut.smeyelframework;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 
 import hu.bme.aut.smeyelframework.functions.CameraPreviewActivity;
 import hu.bme.aut.smeyelframework.functions.LedActivity;
@@ -46,5 +51,34 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, LedActivity.class));
             }
         });
+    }
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i(TAG, "OpenCV loaded successfully");
+
+                    /* OpenCV specific init, for example: enable camera view */
+
+                    // Load native library after(!) OpenCV initialization
+                    System.loadLibrary("app");
+
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
     }
 }

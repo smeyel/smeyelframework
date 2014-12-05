@@ -30,6 +30,15 @@ public class MessageHandlerRepo {
         }
 
         map.put(type, handler);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Currently registered handlers:\n");
+        for (MessageType key : map.keySet()) {
+            MessageHandler value = map.get(key);
+            sb.append(key.subject).append(" - ").append(key.action).append("\t").append(value);
+            sb.append("\n");
+        }
+        Log.i(TAG, sb.toString());
     }
 
     public static void unregisterHandler(MessageType type) {
