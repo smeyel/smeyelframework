@@ -27,6 +27,14 @@ import hu.bme.aut.smeyelframework.communication.autrar.model.RarItem;
 import hu.bme.aut.smeyelframework.communication.autrar.model.Types;
 import hu.bme.aut.smeyelframework.timing.Timing;
 
+/**
+ * This activity is responsible for performing the necessary steps
+ * for time synchronization.
+ * It contains a {@link org.opencv.android.JavaCameraView} do display the
+ * camera preview image, and registers for messages with type COMMAND ans subject
+ * TIMESYNC. When such a message is received, a certain number of brightness values
+ * are stored and then returned, along with corresponding timestamps.
+ */
 public class LedActivity extends Activity {
 
     private TextView displayTv;
